@@ -1,0 +1,13 @@
+name = "pcapng_in_ada"
+description = "SPARK Silver PCAPNG read/write library (IETF pcapng)"
+version = "0.1.0"
+tags = ["pcapng", "pcap", "packet", "capture", "spark", "wireshark"]
+licenses = "Apache-2.0"
+website = "https://github.com/RyansOpenSourceRice/pcapng-in-ada"
+
+authors = ["Ryan"]
+maintainers = ["Ryan <ryan@example.com>"]
+maintainers-logins = ["RyansOpenSourceRice"]
+
+[[depends-on]]
+gnatprove = "^16.1.0"

@@ -1,0 +1,46 @@
+--  Copyright 2026 Ryan
+--  SPDX-License-Identifier: Apache-2.0
+--
+--  pcapng_in_ada.gpr - GNAT project for the Pcapng_In_Ada library.
+--  Target: latest LTS (GNAT FSF 16 / GNAT Pro 26 family, Ada 2022).
+
+with "config/pcapng_in_ada_config.gpr";
+
+project Pcapng_In_Ada is
+
+   for Library_Name use "pcapng_in_ada";
+   for Library_Kind use "static";
+   for Library_Version use Project'Library_Name & ".so.0.1.0";
+   for Source_Dirs use ("src");
+   for Object_Dir use "obj";
+   for Library_Dir use "lib";
+   for Create_Missing_Dirs use "True";
+
+   package Naming is
+      for Spec_Suffix ("Ada") use ".ads";
+      for Body_Suffix ("Ada") use ".adb";
+   end Naming;
+
+   package Compiler is
+      for Default_Switches ("Ada") use
+        ("-gnat2022",
+         "-gnatwa",
+         "-gnatVa",
+         "-gnata",
+         "-gnato",
+         "-O2");
+   end Compiler;
+
+   package Prove is
+      for Proof_Switches ("Ada") use
+        ("--mode=silver",
+         "--level=2",
+         "--checks-as-errors=on",
+         "--warnings=continue");
+   end Prove;
+
+   package Binder is
+      for Default_Switches ("Ada") use ("-Es");
+   end Binder;
+
+end Pcapng_In_Ada;
