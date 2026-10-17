@@ -14,31 +14,29 @@ package body Pcapng_In_Ada.IDB is
      (Resol_Byte : Unsigned_8) return Unsigned_64
    is
       Low : constant Unsigned_8 := Resol_Byte and 16#7F#;
-      Acc : Unsigned_64 := 1;
+      --  Exact powers of ten; index 0 .. 19 covers every unclamped
+      --  decimal tsresol value without a multiply loop (nonlinear
+      --  arithmetic the prover cannot discharge).
+      Pow10 : constant array (0 .. 19) of Unsigned_64 :=
+        (1, 10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000,
+         100_000_000, 1_000_000_000, 10_000_000_000, 100_000_000_000,
+         1_000_000_000_000, 10_000_000_000_000, 100_000_000_000_000,
+         1_000_000_000_000_000, 10_000_000_000_000_000,
+         100_000_000_000_000_000, 1_000_000_000_000_000_000,
+         10_000_000_000_000_000_000);
    begin
       if (Resol_Byte and 16#80#) /= 0 then
-         --  Binary: 2 ** Low, Low <= 127 but loop is bounded by spec
-         --  values (real captures use <= 30). Clamp defensively.
+         --  Binary: 2 ** Low via a single shift (Low <= 60 keeps it
+         --  exact and free of overflow checks).
          if Low > 60 then
             return 1;
          end if;
-         for I in 1 .. Natural (Low) loop
-            pragma Loop_Invariant (Acc >= 1);
-            Acc := Acc * 2;
-         end loop;
-         return Acc;
+         return Shift_Left (Unsigned_64'(1), Natural (Low));
       else
          if Low > 19 then
             return 1_000_000;
          end if;
-         for I in 1 .. Natural (Low) loop
-            pragma Loop_Invariant (Acc >= 1);
-            Acc := Acc * 10;
-         end loop;
-         if Acc = 0 then
-            return 1;
-         end if;
-         return Acc;
+         return Pow10 (Natural (Low));
       end if;
    end Ts_Ticks_Per_Second;
 

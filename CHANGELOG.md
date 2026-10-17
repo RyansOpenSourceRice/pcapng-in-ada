@@ -3,6 +3,16 @@
 All notable changes to `pcapng_in_ada` are documented here.
 Format follows Keep a Changelog; versioning follows SemVer.
 
+## [Unreleased]
+
+### Fixed
+
+- SPB with Total 12..15 or a non-32-bit-aligned body now returns
+  `Bad_Length` instead of raising `Constraint_Error` (SPECIFICATION rule 6
+  pins down the alignment requirement).
+- `Parse_Header` / `Encode_Envelope` postconditions now pin down `Next`
+  and the length bounds, closing Silver proof links for all callers.
+
 ## [0.1.0] - 2026-10-16
 
 ### Added

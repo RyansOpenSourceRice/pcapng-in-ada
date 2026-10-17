@@ -24,7 +24,8 @@ Root package `Pcapng_In_Ada`, crate/GPR `pcapng_in_ada`.
 3. Every block: leading and trailing total-length must match; else `Bad_Trailer`.
 4. Lengths < 12 or > 16#1000000# are `Bad_Length`; short buffer is `Truncated`.
 5. SHB major must be 1, minor 0 or 2; else `Bad_Version`.
-6. IDB minimum 20 bytes; EPB minimum 32; SPB minimum 16; caplen+pad must fit.
+6. IDB minimum 20 bytes; EPB minimum 32; SPB minimum 16 with the body
+   after orig_len 32-bit aligned; caplen+pad must fit.
 7. Options are `(code:16, len:16, value, pad32)`; code 0 ends; unknown codes skipped.
 8. Unknown block types are skipped (`Kind_Unknown`), never an error.
 9. A new SHB restarts the section and may flip byte order.

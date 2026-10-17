@@ -30,7 +30,11 @@ package Pcapng_In_Ada.Blocks is
    with
      Pre  => Pos >= Buf'First and then Pos <= Buf'Last,
      Post => (if Error = None
-              then Next > Pos and then Next - 1 <= Buf'Last);
+              then Next = Pos + Header.Total_Length
+                and then Next - 1 <= Buf'Last
+                and then Header.Total_Length >= Min_Block_Size
+                and then Header.Total_Length <= Max_Block_Size
+                and then Header.Total_Length <= Buf'Last - Pos + 1);
 
    --  Validate that a claimed total length fits inside Buf from Pos.
    function Length_Fits
@@ -55,6 +59,9 @@ package Pcapng_In_Ada.Blocks is
    with
      Pre  => Pos >= Buf'First and then Pos <= Buf'Last
        and then Body_Len <= Max_Block_Size,
-     Post => True;
+     Post => (if Error = None
+              then Next = Pos + Body_Len + Block_Header_Size
+                             + Block_Trailer_Size
+                and then Next - 1 <= Buf'Last);
 
 end Pcapng_In_Ada.Blocks;
