@@ -21,8 +21,11 @@ jobs:
         run: |
           mkdir -p "$HOME/.local/bin"
           curl -sL -o /tmp/alire.zip https://github.com/alire-project/alire/releases/download/v2.1.1/alr-2.1.1-bin-x86_64-linux.zip
-          unzip -o -d "$HOME/.local/bin" /tmp/alire.zip
+          rm -rf /tmp/alire-dist && mkdir -p /tmp/alire-dist
+          unzip -o -q /tmp/alire.zip -d /tmp/alire-dist
+          install -m 0755 /tmp/alire-dist/bin/alr "$HOME/.local/bin/alr"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/alr" --version
 
       - name: Build library
         run: alr -n build
