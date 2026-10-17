@@ -29,3 +29,15 @@ within budget.
 Build (`alr build`) → unit drivers (`tests.gpr`) → examples (`examples.gpr`)
 → `gnatprove --mode=silver --level=2`. Fuzz/corpus differential testing
 against Wireshark is roadmap (see ROADMAP.md).
+
+## Scanner coverage (§9/§29 — documented skips)
+
+- `pre-commit` job: Betterleaks + Codespell + hygiene via the checked-in
+  `.pre-commit-config.yaml` (same file locally and in CI; no parallel jobs).
+- `sast` job: OpenGrep over the non-Ada surfaces (scripts, workflows,
+  docs). Ada sources are outside OpenGrep's rule coverage; their static
+  assurance is GNATprove Silver in `build-test-prove`.
+- `container`/Trivy: skipped — the repo ships no container image
+  (no Dockerfile/Containerfile/Helm chart).
+- `dynamic`/Nyx: skipped — non-runtime library; no probeable service to boot.
+- `reliability`/Plumbline: skipped — no LLM/agent code in the repo.
