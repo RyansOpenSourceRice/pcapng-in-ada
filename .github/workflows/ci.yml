@@ -10,6 +10,35 @@ permissions:
   contents: read
 
 jobs:
+  pre-commit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Run pre-commit suite
+        uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
+        with:
+          extra_args: --all-files --show-diff-on-failure
+
+  sast:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: OpenGrep static analysis
+        run: |
+          curl -sL -o /tmp/opengrep https://github.com/opengrep/opengrep/releases/download/v1.31.0/opengrep_manylinux_x86
+          chmod +x /tmp/opengrep
+          #  Ada is outside OpenGrep's rule coverage, so this surfaces
+          #  findings on scripts/workflows/docs; Ada assurance is GNATprove
+          #  Silver in build-test-prove. Whole-repo scan: .gitignore output
+          #  (obj/, bin/) is skipped automatically.
+          /tmp/opengrep scan --quiet .
+
   build-test-prove:
     runs-on: ubuntu-24.04
     steps:

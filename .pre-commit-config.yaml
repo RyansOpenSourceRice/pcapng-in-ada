@@ -1,4 +1,12 @@
 repos:
+  - repo: https://github.com/AikidoSec/betterleaks
+    rev: v1.1.1
+    hooks:
+      - id: betterleaks
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.3.0
+    hooks:
+      - id: codespell
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: 4c592bd501032aeaf873d07a26a6c1c594f7728d9
     hooks:
