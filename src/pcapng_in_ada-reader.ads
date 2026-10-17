@@ -37,13 +37,14 @@ package Pcapng_In_Ada.Reader is
    --  Advance one block. First call must land on an SHB.
    --  Cur.Pos one past Buf'Last is accepted (empty At_End step).
    --  Written with subtraction so the check itself cannot overflow.
+   --  The cursor never rewinds before Buf'First.
    procedure Next
      (Buf    : Byte_Buffer;
       Cur    : in out Cursor;
       Curr   : out Current_Block)
    with
      Pre  => Cur.Pos >= Buf'First and then Cur.Pos - 1 <= Buf'Last,
-     Post => True;
+     Post => Cur.Pos >= Buf'First;
 
    function Has_Interfaces return Boolean is (True);
 
@@ -69,11 +70,11 @@ package Pcapng_In_Ada.Reader is
 
     procedure Read_EPB_At
       (Buf   : Byte_Buffer;
-       Pos : Buffer_Index;
-       Order : Byte_Order;
-       View  : out Packet.EPB_View;
-       Next  : out Natural;
-       Error : out Error_Kind)
+      Pos : Buffer_Index;
+      Order : Byte_Order;
+      View  : out Packet.EPB_View;
+      Next  : out Natural;
+      Error : out Error_Kind)
     with
       Pre => Pos >= Buf'First and then Pos <= Buf'Last;
 
