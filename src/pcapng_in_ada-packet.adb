@@ -13,7 +13,7 @@ package body Pcapng_In_Ada.Packet is
    function Dec32
      (Buf : Byte_Buffer; Pos : Buffer_Index; Order : Byte_Order)
       return Unsigned_32
-   with Pre => Pos >= Buf'First and then Pos <= Buf'Last - 3
+   with Pre => Pos >= Buf'First and then Pos + 3 <= Buf'Last
    is
    begin
       case Order is

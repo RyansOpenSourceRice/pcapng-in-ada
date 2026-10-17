@@ -129,17 +129,29 @@ package body Pcapng_In_Ada.Reader is
    function Block_Count
      (Buf : Byte_Buffer; Limit : Natural := 1_000_000) return Natural
    is
-      Cur   : Cursor := First (Buf'First);
+      Cur   : Cursor := First (1);
       Curr  : Current_Block;
       Count : Natural := 0;
    begin
-      if Buf'Length < Min_Block_Size then
+      --  Reject insane bounds up front so the Buffer_Index conversions
+      --  and cursor arithmetic below are provably safe; a short image
+      --  simply holds no complete blocks.
+      if Buf'First < Buffer_Index'First
+        or else Buf'Last > Buffer_Index'Last
+        or else Buf'Length < Min_Block_Size
+      then
          return 0;
       end if;
+      Cur := First (Buf'First);
       for I in 1 .. Limit loop
          pragma Loop_Invariant (Count < I);
          pragma Loop_Invariant (Cur.Pos >= Buf'First);
-         pragma Loop_Invariant (Cur.Pos - 1 <= Buf'Last);
+         --  Re-establish Next's precondition locally: the cursor may
+         --  rest one past the end after a block (At_End), which the
+         --  checks below treat as a normal stop.
+         if Cur.Pos < Buf'First or else Cur.Pos > Buf'Last then
+            return Count;
+         end if;
          Next (Buf, Cur, Curr);
          if Curr.Error /= None then
             return Count;

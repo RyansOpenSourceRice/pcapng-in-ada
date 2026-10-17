@@ -53,7 +53,9 @@ package Pcapng_In_Ada.Reader is
       Pos : Buffer_Index;
       View  : out SHB.SHB_View;
       Next  : out Natural;
-      Error : out Error_Kind);
+      Error : out Error_Kind)
+   with
+     Pre => Pos >= Buf'First and then Pos <= Buf'Last;
 
    procedure Read_IDB_At
      (Buf   : Byte_Buffer;
@@ -61,7 +63,9 @@ package Pcapng_In_Ada.Reader is
       Order : Byte_Order;
       View  : out IDB.IDB_View;
       Next  : out Natural;
-      Error : out Error_Kind);
+      Error : out Error_Kind)
+   with
+     Pre => Pos >= Buf'First and then Pos <= Buf'Last;
 
    procedure Read_EPB_At
      (Buf   : Byte_Buffer;
@@ -69,7 +73,9 @@ package Pcapng_In_Ada.Reader is
       Order : Byte_Order;
       View  : out Packet.EPB_View;
       Next  : out Natural;
-      Error : out Error_Kind);
+      Error : out Error_Kind)
+   with
+     Pre => Pos >= Buf'First and then Pos <= Buf'Last;
 
    function Block_Count
      (Buf : Byte_Buffer; Limit : Natural := 1_000_000) return Natural
