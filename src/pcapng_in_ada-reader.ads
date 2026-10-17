@@ -47,35 +47,35 @@ package Pcapng_In_Ada.Reader is
 
    function Has_Interfaces return Boolean is (True);
 
-   --  Convenience decoders that re-parse the block at Pos.
-   procedure Read_SHB_At
-     (Buf   : Byte_Buffer;
-      Pos : Buffer_Index;
-      View  : out SHB.SHB_View;
-      Next  : out Natural;
-      Error : out Error_Kind)
-   with
-     Pre => Pos >= Buf'First and then Pos <= Buf'Last;
+    --  Convenience decoders that re-parse the block at Pos.
+    procedure Read_SHB_At
+      (Buf   : Byte_Buffer;
+       Pos : Buffer_Index;
+       View  : out SHB.SHB_View;
+       Next  : out Natural;
+       Error : out Error_Kind)
+    with
+      Pre => Pos >= Buf'First and then Pos <= Buf'Last;
 
-   procedure Read_IDB_At
-     (Buf   : Byte_Buffer;
-      Pos : Buffer_Index;
-      Order : Byte_Order;
-      View  : out IDB.IDB_View;
-      Next  : out Natural;
-      Error : out Error_Kind)
-   with
-     Pre => Pos >= Buf'First and then Pos <= Buf'Last;
+    procedure Read_IDB_At
+      (Buf   : Byte_Buffer;
+       Pos : Buffer_Index;
+       Order : Byte_Order;
+       View  : out IDB.IDB_View;
+       Next  : out Natural;
+       Error : out Error_Kind)
+    with
+      Pre => Pos >= Buf'First and then Pos <= Buf'Last;
 
-   procedure Read_EPB_At
-     (Buf   : Byte_Buffer;
-      Pos : Buffer_Index;
-      Order : Byte_Order;
-      View  : out Packet.EPB_View;
-      Next  : out Natural;
-      Error : out Error_Kind)
-   with
-     Pre => Pos >= Buf'First and then Pos <= Buf'Last;
+    procedure Read_EPB_At
+      (Buf   : Byte_Buffer;
+       Pos : Buffer_Index;
+       Order : Byte_Order;
+       View  : out Packet.EPB_View;
+       Next  : out Natural;
+       Error : out Error_Kind)
+    with
+      Pre => Pos >= Buf'First and then Pos <= Buf'Last;
 
    function Block_Count
      (Buf : Byte_Buffer; Limit : Natural := 1_000_000) return Natural

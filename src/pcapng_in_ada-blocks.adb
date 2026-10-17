@@ -171,7 +171,7 @@ package body Pcapng_In_Ada.Blocks is
          Trail_Pos : constant Buffer_Index := Pos + Total - 4;
       begin
          pragma Assert (Trail_Pos >= Pos);
-         pragma Assert (Trail_Pos <= Buf'Last - 3);
+         pragma Assert (Trail_Pos + 3 <= Buf'Last);
          Encode_Ordered (Buf, Trail_Pos, Order, Unsigned_32 (Total));
       end;
 
