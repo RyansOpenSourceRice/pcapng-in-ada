@@ -14,61 +14,61 @@ package Pcapng_In_Ada.Common is
    function Decode_U16_LE
      (Buf : Byte_Buffer; Pos : Buffer_Index) return Unsigned_16
    with
-     Pre  => Pos >= Buf'First and then Pos <= Buf'Last - 1,
+     Pre  => Pos >= Buf'First and then Pos + 1 <= Buf'Last,
      Post => True;
 
    function Decode_U16_BE
      (Buf : Byte_Buffer; Pos : Buffer_Index) return Unsigned_16
    with
-     Pre  => Pos >= Buf'First and then Pos <= Buf'Last - 1,
+     Pre  => Pos >= Buf'First and then Pos + 1 <= Buf'Last,
      Post => True;
 
    function Decode_U32_LE
      (Buf : Byte_Buffer; Pos : Buffer_Index) return Unsigned_32
    with
-     Pre  => Pos >= Buf'First and then Pos <= Buf'Last - 3,
+     Pre  => Pos >= Buf'First and then Pos + 3 <= Buf'Last,
      Post => True;
 
    function Decode_U32_BE
      (Buf : Byte_Buffer; Pos : Buffer_Index) return Unsigned_32
    with
-     Pre  => Pos >= Buf'First and then Pos <= Buf'Last - 3,
+     Pre  => Pos >= Buf'First and then Pos + 3 <= Buf'Last,
      Post => True;
 
    function Decode_U64_LE
      (Buf : Byte_Buffer; Pos : Buffer_Index) return Unsigned_64
    with
-     Pre  => Pos >= Buf'First and then Pos <= Buf'Last - 7,
+     Pre  => Pos >= Buf'First and then Pos + 7 <= Buf'Last,
      Post => True;
 
    procedure Encode_U16_LE
      (Buf : in out Byte_Buffer; Pos : Buffer_Index; Value : Unsigned_16)
    with
-     Pre  => Pos >= Buf'First and then Pos <= Buf'Last - 1,
+     Pre  => Pos >= Buf'First and then Pos + 1 <= Buf'Last,
      Post => True;
 
    procedure Encode_U16_BE
      (Buf : in out Byte_Buffer; Pos : Buffer_Index; Value : Unsigned_16)
    with
-     Pre  => Pos >= Buf'First and then Pos <= Buf'Last - 1,
+     Pre  => Pos >= Buf'First and then Pos + 1 <= Buf'Last,
      Post => True;
 
    procedure Encode_U32_LE
      (Buf : in out Byte_Buffer; Pos : Buffer_Index; Value : Unsigned_32)
    with
-     Pre  => Pos >= Buf'First and then Pos <= Buf'Last - 3,
+     Pre  => Pos >= Buf'First and then Pos + 3 <= Buf'Last,
      Post => True;
 
    procedure Encode_U32_BE
      (Buf : in out Byte_Buffer; Pos : Buffer_Index; Value : Unsigned_32)
    with
-     Pre  => Pos >= Buf'First and then Pos <= Buf'Last - 3,
+     Pre  => Pos >= Buf'First and then Pos + 3 <= Buf'Last,
      Post => True;
 
    procedure Encode_U64_LE
      (Buf : in out Byte_Buffer; Pos : Buffer_Index; Value : Unsigned_64)
    with
-     Pre  => Pos >= Buf'First and then Pos <= Buf'Last - 7,
+     Pre  => Pos >= Buf'First and then Pos + 7 <= Buf'Last,
      Post => True;
 
    function Padding_For (Length : Natural) return Natural is

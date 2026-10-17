@@ -12,7 +12,7 @@ package body Pcapng_In_Ada.Blocks is
    function Decode_Ordered
      (Buf : Byte_Buffer; Pos : Buffer_Index; Order : Byte_Order)
       return Unsigned_32
-   with Pre => Pos >= Buf'First and then Pos <= Buf'Last - 3
+   with Pre => Pos >= Buf'First and then Pos + 3 <= Buf'Last
    is
    begin
       case Order is
@@ -24,7 +24,7 @@ package body Pcapng_In_Ada.Blocks is
    procedure Encode_Ordered
      (Buf : in out Byte_Buffer; Pos : Buffer_Index;
       Order : Byte_Order; Value : Unsigned_32)
-   with Pre => Pos >= Buf'First and then Pos <= Buf'Last - 3
+   with Pre => Pos >= Buf'First and then Pos + 3 <= Buf'Last
    is
    begin
       case Order is
