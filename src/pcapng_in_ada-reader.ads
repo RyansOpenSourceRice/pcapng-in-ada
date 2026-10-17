@@ -70,11 +70,11 @@ package Pcapng_In_Ada.Reader is
 
     procedure Read_EPB_At
       (Buf   : Byte_Buffer;
-      Pos : Buffer_Index;
-      Order : Byte_Order;
-      View  : out Packet.EPB_View;
-      Next  : out Natural;
-      Error : out Error_Kind)
+       Pos : Buffer_Index;
+       Order : Byte_Order;
+       View  : out Packet.EPB_View;
+       Next  : out Natural;
+       Error : out Error_Kind)
     with
       Pre => Pos >= Buf'First and then Pos <= Buf'Last;
 
