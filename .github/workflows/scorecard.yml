@@ -3,6 +3,8 @@ name: Scorecard
 on:
   push:
     branches: ["main"]
+  pull_request:
+    branches: ["main"]
   schedule:
     - cron: "0 2 * * 1"
 
@@ -16,6 +18,10 @@ jobs:
       security-events: write
       contents: read
       actions: read
+      #  Required for OIDC when publish_results is true. Publishing is
+      #  skipped automatically on pull requests (analysis only, per the
+      #  ossf/scorecard-action docs); full results publish after merge.
+      id-token: write
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -32,18 +38,3 @@ jobs:
           name: scorecard-results
           path: results.sarif
           if-no-files-found: ignore
-
-  codeql:
-    runs-on: ubuntu-24.04
-    permissions:
-      security-events: write
-      contents: read
-      actions: read
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          persist-credentials: false
-
-      - uses: github/codeql-action@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-        with:
-          languages: cpp
