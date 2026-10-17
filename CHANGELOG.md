@@ -12,6 +12,12 @@ Format follows Keep a Changelog; versioning follows SemVer.
   pins down the alignment requirement).
 - `Parse_Header` / `Encode_Envelope` postconditions now pin down `Next`
   and the length bounds, closing Silver proof links for all callers.
+- Proof hardening (no behavior change on sane inputs): length
+  preconditions written addition-first (`Pos + N <= Buf'Last`);
+  `Read_*_At` wrappers carry `Pos` preconditions; `Block_Count` rejects
+  insane bounds up front and re-checks the cursor before each `Next`;
+  `Append_IDB`/`Append_EPB` share `Append_SHB`'s guard shape; `Written`
+  returns 0 on insane bounds.
 
 ## [0.1.0] - 2026-10-16
 

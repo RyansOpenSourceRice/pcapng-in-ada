@@ -47,8 +47,10 @@ package Pcapng_In_Ada.Writer is
      Pre  => Last <= Buf'Last,
      Post => True;
 
-   --  Total bytes written so far (0 when Last < Buf'First).
+   --  Total bytes written so far (0 when Last < Buf'First, when the
+   --  bounds are insane, or when nothing was written yet).
    function Written (Buf : Byte_Buffer; Last : Natural) return Natural is
-     (if Last < Buf'First then 0 else Last - Buf'First + 1);
+     (if Last < Buf'First or else Last > Buf'Last or else Buf'First < 1 then 0
+      else Last - Buf'First + 1);
 
 end Pcapng_In_Ada.Writer;

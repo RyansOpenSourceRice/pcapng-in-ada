@@ -74,7 +74,12 @@ package body Pcapng_In_Ada.Writer is
       Err : Error_Kind;
    begin
       Error := No_Space;
-      if Last /= Buf'First - 1 and then (Last < Buf'First or else Last >= Buf'Last) then
+      if Last + 1 < Buf'First or else Last > Buf'Last then
+         if not (Last = Buf'First - 1) then
+            return;
+         end if;
+      end if;
+      if Last = Buf'Last then
          return;
       end if;
       Pos := (if Last < Buf'First then Buf'First else Last + 1);
@@ -127,7 +132,12 @@ package body Pcapng_In_Ada.Writer is
          return;
       end if;
 
-      if Last /= Buf'First - 1 and then (Last < Buf'First or else Last >= Buf'Last) then
+      if Last + 1 < Buf'First or else Last > Buf'Last then
+         if not (Last = Buf'First - 1) then
+            return;
+         end if;
+      end if;
+      if Last = Buf'Last then
          return;
       end if;
       Pos := (if Last < Buf'First then Buf'First else Last + 1);
