@@ -3,3 +3,29 @@
 
 # Ada Library Information
 *.ali
+
+# GNAT build artefacts
+/obj/
+/lib/
+/bin/
+*.stdout
+*.stderr
+
+# Alire
+/alire/
+/config/
+*.lock
+
+# GNATprove
+/gnatprove/
+*.spark
+
+# Editor / OS
+.vscode/
+*.swp
+*~
+.DS_Store
+
+# Demo outputs
+sample.pcapng
+results.sarif

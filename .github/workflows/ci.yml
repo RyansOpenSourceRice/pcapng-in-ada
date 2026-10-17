@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "dev"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-prove:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Install Alire
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          curl -sL -o /tmp/alire.zip https://github.com/alire-project/alire/releases/download/v2.1.1/alr-2.1.1-bin-x86_64-linux.zip
+          rm -rf /tmp/alire-dist && mkdir -p /tmp/alire-dist
+          unzip -o -q /tmp/alire.zip -d /tmp/alire-dist
+          install -m 0755 /tmp/alire-dist/bin/alr "$HOME/.local/bin/alr"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/alr" --version
+
+      - name: Build library
+        run: alr -n build
+
+      - name: Build and run tests
+        run: |
+          alr exec -- gprbuild -P tests/tests.gpr
+          ./bin/test_reader
+          ./bin/test_malformed
+
+      - name: Build examples
+        run: alr exec -- gprbuild -P examples/examples.gpr
+
+      - name: GNATprove Silver
+        run: alr exec -- gnatprove -P pcapng_in_ada.gpr --mode=silver --level=2 --checks-as-errors=on
+
+      - name: Upload test binaries
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: test-binaries
+          path: bin/
+          if-no-files-found: ignore
