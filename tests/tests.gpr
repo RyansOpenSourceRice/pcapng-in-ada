@@ -1,11 +1,14 @@
 with "../pcapng_in_ada.gpr";
+with "aunit";
 
 project Tests is
 
    for Source_Dirs use (".");
    for Object_Dir use "../obj/tests";
    for Exec_Dir use "../bin";
-   for Main use ("test_reader.adb", "test_malformed.adb");
+   for Main use ("aunit_runner.adb",
+                 "gen_corpus.adb",
+                 "fuzz_harness.adb");
    for Create_Missing_Dirs use "True";
 
    package Compiler is

@@ -1,0 +1,10 @@
+--  AFL++ GPR config: drive Ada compilation through afl-gcc-fast so the
+--  fuzz harness is instrumented. Used only by scripts/fuzz-afl.sh
+--  (local, best-effort): gprbuild --config=fuzz/afl.cgpr ...
+--  Requires a GCC-plugin AFL++ build compatible with the FSF GNAT gcc.
+
+configuration project AFL is
+   package Compiler is
+      for Driver ("Ada") use "afl-gcc-fast";
+   end Compiler;
+end AFL;

@@ -44,4 +44,18 @@ package Pcapng_In_Ada.SHB is
    with
      Pre => Pos >= Buf'First and then Pos <= Buf'Last;
 
+   SHB_Hardware_Opt : constant Unsigned_16 := 2;
+   SHB_OS_Opt       : constant Unsigned_16 := 3;
+   SHB_Userappl_Opt : constant Unsigned_16 := 4;
+
+   --  Locate an option inside a parsed SHB view (comment = 1, etc.).
+   procedure Get_Option
+     (Buf   : Byte_Buffer;
+      View  : SHB_View;
+      Order : Byte_Order;
+      Code  : Unsigned_16;
+      First : out Natural;
+      Last  : out Natural;
+      Found : out Boolean);
+
 end Pcapng_In_Ada.SHB;

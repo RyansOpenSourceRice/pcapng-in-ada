@@ -7,6 +7,7 @@ with Interfaces; use Interfaces;
 with Pcapng_In_Ada; use Pcapng_In_Ada;
 with Pcapng_In_Ada.Common; use Pcapng_In_Ada.Common;
 with Pcapng_In_Ada.Blocks; use Pcapng_In_Ada.Blocks;
+with Pcapng_In_Ada.Options;
 
 package body Pcapng_In_Ada.SHB is
 
@@ -155,6 +156,37 @@ package body Pcapng_In_Ada.SHB is
          Valid          => True);
       Next := H_Next;
       Error := None;
-   end Parse_SHB;
+    end Parse_SHB;
+
+   procedure Get_Option
+     (Buf   : Byte_Buffer;
+      View  : SHB_View;
+      Order : Byte_Order;
+      Code  : Unsigned_16;
+      First : out Natural;
+      Last  : out Natural;
+      Found : out Boolean)
+   is
+      use Pcapng_In_Ada.Options;
+      O : Option_View;
+   begin
+      First := 1;
+      Last := 0;
+      Found := False;
+      if not View.Valid then
+         return;
+      end if;
+      if View.Body_Last < View.Body_First then
+         return;
+      end if;
+      Find_Option (Buf, View.Body_First, View.Body_Last,
+                   Order, Code, O, Found);
+      if Found and then O.Valid then
+         First := O.First;
+         Last := O.Last;
+      else
+         Found := False;
+      end if;
+   end Get_Option;
 
 end Pcapng_In_Ada.SHB;

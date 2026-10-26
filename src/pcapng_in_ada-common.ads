@@ -71,6 +71,12 @@ package Pcapng_In_Ada.Common is
      Pre  => Pos >= Buf'First and then Pos + 7 <= Buf'Last,
      Post => True;
 
+   procedure Encode_U64_BE
+     (Buf : in out Byte_Buffer; Pos : Buffer_Index; Value : Unsigned_64)
+   with
+     Pre  => Pos >= Buf'First and then Pos + 7 <= Buf'Last,
+     Post => True;
+
    function Padding_For (Length : Natural) return Natural is
      ((4 - (Length mod 4)) mod 4)
    with

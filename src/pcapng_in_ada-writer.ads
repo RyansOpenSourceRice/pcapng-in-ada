@@ -15,6 +15,9 @@ package Pcapng_In_Ada.Writer is
    Default_Snap_Len : constant Unsigned_32 := 262_144;
    Ethernet_Link    : constant Unsigned_16 := 1;
 
+   Max_Comment_Len : constant Natural := 512;
+   Max_Name_Len    : constant Natural := 256;
+
    --  Append a Section Header Block (no options). Advances Last.
    procedure Append_SHB
      (Buf   : in out Byte_Buffer;
@@ -42,6 +45,89 @@ package Pcapng_In_Ada.Writer is
       If_Index : Unsigned_32;
       Ts       : Unsigned_64;
       Data     : Byte_Buffer;
+      Error    : out Error_Kind)
+   with
+     Pre  => Last <= Buf'Last,
+     Post => True;
+
+   --  Byte-order-explicit writers (v0.3). Same framing as above but
+   --  honor Order on the wire; existing Append_* stay LE for compat.
+   procedure Append_SHB_Ex
+     (Buf          : in out Byte_Buffer;
+      Last         : in out Natural;
+      Order        : Byte_Order;
+      Section_Len  : Integer_64 := -1;
+      Error        : out Error_Kind)
+   with
+     Pre  => Last <= Buf'Last,
+     Post => True;
+
+   procedure Append_IDB_Ex
+     (Buf       : in out Byte_Buffer;
+      Last      : in out Natural;
+      Order     : Byte_Order;
+      Link_Type : Unsigned_16 := Ethernet_Link;
+      Snap_Len  : Unsigned_32 := Default_Snap_Len;
+      Error     : out Error_Kind)
+   with
+     Pre  => Last <= Buf'Last,
+     Post => True;
+
+   procedure Append_EPB_Ex
+     (Buf      : in out Byte_Buffer;
+      Last     : in out Natural;
+      Order    : Byte_Order;
+      If_Index : Unsigned_32;
+      Ts       : Unsigned_64;
+      Data     : Byte_Buffer;
+      Error    : out Error_Kind)
+   with
+     Pre  => Last <= Buf'Last,
+     Post => True;
+
+   procedure Append_SPB_Ex
+     (Buf      : in out Byte_Buffer;
+      Last     : in out Natural;
+      Order    : Byte_Order;
+      Orig_Len : Unsigned_32;
+      Data     : Byte_Buffer;
+      Error    : out Error_Kind)
+   with
+     Pre  => Last <= Buf'Last,
+     Post => True;
+
+   --  Single-option convenience writers. Comment/Name are raw UTF-8
+   --  bytes without NUL; over-long input returns Bad_Length.
+   procedure Append_SHB_With_Comment
+     (Buf     : in out Byte_Buffer;
+      Last    : in out Natural;
+      Order   : Byte_Order;
+      Comment : Byte_Buffer;
+      Error   : out Error_Kind)
+   with
+     Pre  => Last <= Buf'Last,
+     Post => True;
+
+   procedure Append_IDB_With_Name
+     (Buf      : in out Byte_Buffer;
+      Last     : in out Natural;
+      Order    : Byte_Order;
+      Link     : Unsigned_16 := Ethernet_Link;
+      Snap     : Unsigned_32 := Default_Snap_Len;
+      If_Name  : Byte_Buffer;
+      Error    : out Error_Kind)
+   with
+     Pre  => Last <= Buf'Last,
+     Post => True;
+
+   procedure Append_EPB_With_Comment
+     (Buf      : in out Byte_Buffer;
+      Last     : in out Natural;
+      Order    : Byte_Order;
+      If_Index : Unsigned_32;
+      Ts       : Unsigned_64;
+      Data     : Byte_Buffer;
+      Comment  : Byte_Buffer;
       Error    : out Error_Kind)
    with
      Pre  => Last <= Buf'Last,

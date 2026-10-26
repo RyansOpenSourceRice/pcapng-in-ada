@@ -12,6 +12,8 @@ with Pcapng_In_Ada; use Pcapng_In_Ada;
 with Pcapng_In_Ada.SHB;
 with Pcapng_In_Ada.IDB;
 with Pcapng_In_Ada.Packet;
+with Pcapng_In_Ada.NRB;
+with Pcapng_In_Ada.ISB;
 
 package Pcapng_In_Ada.Reader is
 
@@ -73,6 +75,26 @@ package Pcapng_In_Ada.Reader is
        Pos : Buffer_Index;
        Order : Byte_Order;
        View  : out Packet.EPB_View;
+       Next  : out Natural;
+       Error : out Error_Kind)
+    with
+      Pre => Pos >= Buf'First and then Pos <= Buf'Last;
+
+    procedure Read_NRB_At
+      (Buf   : Byte_Buffer;
+       Pos : Buffer_Index;
+       Order : Byte_Order;
+       View  : out NRB.NRB_View;
+       Next  : out Natural;
+       Error : out Error_Kind)
+    with
+      Pre => Pos >= Buf'First and then Pos <= Buf'Last;
+
+    procedure Read_ISB_At
+      (Buf   : Byte_Buffer;
+       Pos : Buffer_Index;
+       Order : Byte_Order;
+       View  : out ISB.ISB_View;
        Next  : out Natural;
        Error : out Error_Kind)
     with
