@@ -96,6 +96,12 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           "$HOME/.local/bin/alr" --version
 
+      - name: Deploy toolchain and build library
+        #  The fuzz/differential scripts call bare gprbuild after
+        #  `alr printenv`; on a fresh runner the toolchain is not
+        #  deployed until the first alr build, so build once here.
+        run: alr -n build
+
       - name: Try install tshark (oracle, best-effort)
         continue-on-error: true
         run: |

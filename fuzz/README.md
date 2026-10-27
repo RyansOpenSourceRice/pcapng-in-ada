@@ -24,5 +24,5 @@ sh scripts/fuzz-afl.sh   # 60s over tests/corpus seeds, needs afl++
 Rebuilds the harness through `afl-gcc-fast` (`fuzz/afl.cgpr`) and runs
 `afl-fuzz -V 60`. Needs a GCC-plugin AFL++ compatible with FSF GNAT;
 `libFuzzer`/`gnatfuzz` need GNAT Pro LLVM and are future work.
-Check `out/crashes/` afterwards; minimise any crashers back into
+Check `out/crashes/` afterwards; minimise any crashes back into
 `tests/corpus/` via `tests/gen_corpus.adb` patterns.
