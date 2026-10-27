@@ -7,6 +7,7 @@ with Interfaces; use Interfaces;
 with Pcapng_In_Ada; use Pcapng_In_Ada;
 with Pcapng_In_Ada.Common; use Pcapng_In_Ada.Common;
 with Pcapng_In_Ada.Blocks; use Pcapng_In_Ada.Blocks;
+with Pcapng_In_Ada.Options;
 
 package body Pcapng_In_Ada.Packet is
 
@@ -191,6 +192,65 @@ package body Pcapng_In_Ada.Packet is
          Total_Length => Hdr.Total_Length, Valid => True);
       Next := H_Nx;
       Error := None;
-   end Parse_SPB;
+    end Parse_SPB;
+
+   procedure Get_EPB_Option
+     (Buf   : Byte_Buffer;
+      View  : EPB_View;
+      Order : Byte_Order;
+      Code  : Unsigned_16;
+      First : out Natural;
+      Last  : out Natural;
+      Found : out Boolean)
+   is
+      use Pcapng_In_Ada.Options;
+      O : Option_View;
+      Start : Natural;
+      Body_End : Natural;
+   begin
+      First := 1;
+      Last := 0;
+      Found := False;
+      if not View.Valid then
+         return;
+      end if;
+      if View.Opt_First = 0 or else View.Opt_First > Buf'Last then
+         return;
+      end if;
+      if View.Data_First < Buf'First
+        or else View.Data_First > Buf'Last
+        or else View.Data_First - Buf'First < 28
+      then
+         return;
+      end if;
+      if View.Total_Length < EPB_Min_Size
+        or else View.Total_Length > Max_Block_Size
+      then
+         return;
+      end if;
+      --  Data_First = block start + 28, so block start is known and
+      --  body end = start + Total - Trailer - 1.
+      Start := View.Data_First - 28;
+      if Start < Buf'First or else Start > Buf'Last then
+         return;
+      end if;
+      if Start + View.Total_Length - 1 > Buf'Last + 4 then
+         --  View came from a different slice; clamp the scan to Buf.
+         Body_End := Buf'Last;
+      else
+         Body_End := Start + View.Total_Length - Block_Trailer_Size - 1;
+      end if;
+      if Body_End < View.Opt_First or else Body_End > Buf'Last then
+         --  No options region.
+         return;
+      end if;
+      Find_Option (Buf, View.Opt_First, Body_End, Order, Code, O, Found);
+      if Found and then O.Valid then
+         First := O.First;
+         Last := O.Last;
+      else
+         Found := False;
+      end if;
+   end Get_EPB_Option;
 
 end Pcapng_In_Ada.Packet;

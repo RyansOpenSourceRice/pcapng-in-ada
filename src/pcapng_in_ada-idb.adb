@@ -7,6 +7,7 @@ with Interfaces; use Interfaces;
 with Pcapng_In_Ada; use Pcapng_In_Ada;
 with Pcapng_In_Ada.Common; use Pcapng_In_Ada.Common;
 with Pcapng_In_Ada.Blocks; use Pcapng_In_Ada.Blocks;
+with Pcapng_In_Ada.Options;
 
 package body Pcapng_In_Ada.IDB is
 
@@ -106,6 +107,42 @@ package body Pcapng_In_Ada.IDB is
          Total_Length => Hdr.Total_Length, Valid => True);
       Next := H_Nx;
       Error := None;
-   end Parse_IDB;
+    end Parse_IDB;
+
+   procedure Get_Option
+     (Buf   : Byte_Buffer;
+      View  : IDB_View;
+      Order : Byte_Order;
+      Code  : Unsigned_16;
+      First : out Natural;
+      Last  : out Natural;
+      Found : out Boolean)
+   is
+      use Pcapng_In_Ada.Options;
+      O : Option_View;
+   begin
+      First := 1;
+      Last := 0;
+      Found := False;
+      if not View.Valid then
+         return;
+      end if;
+      if View.Options_First = 0
+        or else View.Options_First > Buf'Last
+        or else View.Body_Last < View.Options_First
+        or else View.Options_First < Buffer_Index'First
+        or else View.Options_First > Buffer_Index'Last
+      then
+         return;
+      end if;
+      Find_Option (Buf, View.Options_First, View.Body_Last,
+                   Order, Code, O, Found);
+      if Found and then O.Valid then
+         First := O.First;
+         Last := O.Last;
+      else
+         Found := False;
+      end if;
+   end Get_Option;
 
 end Pcapng_In_Ada.IDB;

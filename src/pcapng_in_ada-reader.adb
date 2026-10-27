@@ -9,6 +9,8 @@ with Pcapng_In_Ada.Blocks; use Pcapng_In_Ada.Blocks;
 with Pcapng_In_Ada.SHB;
 with Pcapng_In_Ada.IDB;
 with Pcapng_In_Ada.Packet;
+with Pcapng_In_Ada.NRB;
+with Pcapng_In_Ada.ISB;
 
 package body Pcapng_In_Ada.Reader is
 
@@ -35,17 +37,41 @@ package body Pcapng_In_Ada.Reader is
       IDB.Parse_IDB (Buf, Pos, Order, View, Next, Error);
    end Read_IDB_At;
 
-   procedure Read_EPB_At
-     (Buf   : Byte_Buffer;
-      Pos : Buffer_Index;
-      Order : Byte_Order;
-      View  : out Packet.EPB_View;
-      Next  : out Natural;
-      Error : out Error_Kind)
-   is
-   begin
-      Packet.Parse_EPB (Buf, Pos, Order, View, Next, Error);
-   end Read_EPB_At;
+    procedure Read_EPB_At
+      (Buf   : Byte_Buffer;
+       Pos : Buffer_Index;
+       Order : Byte_Order;
+       View  : out Packet.EPB_View;
+       Next  : out Natural;
+       Error : out Error_Kind)
+    is
+    begin
+       Packet.Parse_EPB (Buf, Pos, Order, View, Next, Error);
+    end Read_EPB_At;
+
+    procedure Read_NRB_At
+      (Buf   : Byte_Buffer;
+       Pos : Buffer_Index;
+       Order : Byte_Order;
+       View  : out NRB.NRB_View;
+       Next  : out Natural;
+       Error : out Error_Kind)
+    is
+    begin
+       NRB.Parse_NRB (Buf, Pos, Order, View, Next, Error);
+    end Read_NRB_At;
+
+    procedure Read_ISB_At
+      (Buf   : Byte_Buffer;
+       Pos : Buffer_Index;
+       Order : Byte_Order;
+       View  : out ISB.ISB_View;
+       Next  : out Natural;
+       Error : out Error_Kind)
+    is
+    begin
+       ISB.Parse_ISB (Buf, Pos, Order, View, Next, Error);
+    end Read_ISB_At;
 
    procedure Next
      (Buf  : Byte_Buffer;
@@ -94,7 +120,24 @@ package body Pcapng_In_Ada.Reader is
 
       Parse_Header (Buf, Cur.Pos, Cur.Order, Hdr, H_Nx, H_Err);
       if H_Err /= None then
-         Curr.Error := H_Err;
+         --  A fresh SHB may flip the section byte order, which makes
+         --  the total length unreadable in the old order (garbage
+         --  length, trailer mismatch). Retry as SHB: its byte-order
+         --  magic decides the order. On failure keep the ORIGINAL
+         --  error so a corrupt block is never masked as Bad_Magic.
+         SHB.Parse_SHB (Buf, Cur.Pos, Sh, Nx, Er);
+         if Er /= None then
+            Curr.Error := H_Err;
+            return;
+         end if;
+         Cur.Order := Sh.Order;
+         Cur.Pos := Nx;
+         Curr :=
+           (Kind => Kind_SHB, Block_Type => SHB_Type,
+            Total_Length => Sh.Total_Length, Next => Nx, Error => None);
+         if Nx > Buf'Last then
+            Cur.At_End := True;
+         end if;
          return;
       end if;
 

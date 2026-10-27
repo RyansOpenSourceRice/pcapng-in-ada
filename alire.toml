@@ -11,3 +11,10 @@ maintainers-logins = ["RyansOpenSourceRice"]
 
 [[depends-on]]
 gnatprove = "^16.1.0"
+
+[[depends-on]]
+aunit = "^26.0.0"
+
+[[actions]]
+type = "test"
+command = ["sh", "scripts/alr-test.sh"]

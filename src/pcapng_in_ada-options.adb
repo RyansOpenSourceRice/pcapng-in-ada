@@ -107,6 +107,54 @@ package body Pcapng_In_Ada.Options is
       end if;
       Next := Pos + Total;
       Error := None;
-   end Next_Option;
+    end Next_Option;
+
+   procedure Find_Option
+     (Buf        : Byte_Buffer;
+      Body_First : Buffer_Index;
+      Body_Last  : Natural;
+      Order      : Byte_Order;
+      Code       : Unsigned_16;
+      Opt        : out Option_View;
+      Found      : out Boolean)
+   is
+      P   : Natural := Body_First;
+      O   : Option_View;
+      Nx  : Natural;
+      Err : Error_Kind;
+   begin
+      Opt := (Code => 0, Length => 0, First => 1, Last => 0, Valid => False);
+      Found := False;
+      if Body_First < Buf'First or else Body_Last > Buf'Last then
+         return;
+      end if;
+      if Body_Last < Body_First then
+         return;
+      end if;
+      for I in 1 .. 65_536 loop
+         pragma Loop_Invariant (True);
+         exit when P > Body_Last;
+         if P < Buf'First or else P > Buf'Last then
+            return;
+         end if;
+         Next_Option (Buf, P, Body_First, Body_Last, Order, O, Nx, Err);
+         if Err /= None or else not O.Valid then
+            return;
+         end if;
+         if O.Code = End_Of_Opt then
+            return;
+         end if;
+         if O.Code = Code then
+            Opt := O;
+            Found := True;
+            return;
+         end if;
+         if Nx <= P then
+            return;
+         end if;
+         P := Nx;
+         exit when I = 65_536;
+      end loop;
+   end Find_Option;
 
 end Pcapng_In_Ada.Options;

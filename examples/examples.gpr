@@ -5,7 +5,8 @@ project Examples is
    for Source_Dirs use (".");
    for Object_Dir use "../obj/examples";
    for Exec_Dir use "../bin";
-   for Main use ("write_sample.adb", "read_dump.adb", "convert_summary.adb");
+   for Main use ("write_sample.adb", "read_dump.adb", "convert_summary.adb",
+                  "streaming_dump.adb", "bench.adb");
    for Create_Missing_Dirs use "True";
 
    package Compiler is

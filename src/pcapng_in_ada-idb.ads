@@ -40,4 +40,19 @@ package Pcapng_In_Ada.IDB is
      (Resol_Byte : Unsigned_8) return Unsigned_64
    with Post => Ts_Ticks_Per_Second'Result > 0;
 
+   If_Name_Opt        : constant Unsigned_16 := 2;
+   If_Description_Opt : constant Unsigned_16 := 3;
+   If_Tsresol_Opt     : constant Unsigned_16 := 9;
+   If_Os_Opt          : constant Unsigned_16 := 12;
+   If_Tsoffset_Opt    : constant Unsigned_16 := 14;
+
+   procedure Get_Option
+     (Buf   : Byte_Buffer;
+      View  : IDB_View;
+      Order : Byte_Order;
+      Code  : Unsigned_16;
+      First : out Natural;
+      Last  : out Natural;
+      Found : out Boolean);
+
 end Pcapng_In_Ada.IDB;

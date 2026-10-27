@@ -41,7 +41,19 @@ package Pcapng_In_Ada.Options is
        and then Body_Last <= Buf'Last,
      Post => True;
 
-   function Options_Byte_Size (Body_Len : Natural) return Boolean is
-     (Body_Len mod 4 = 0);
+    function Options_Byte_Size (Body_Len : Natural) return Boolean is
+      (Body_Len mod 4 = 0);
+
+   --  Scan Body_First .. Body_Last for the first option with the given
+   --  Code. Returns Found = True and the option view on success.
+   --  Unknown codes are skipped; endofopt stops the scan.
+   procedure Find_Option
+     (Buf        : Byte_Buffer;
+      Body_First : Buffer_Index;
+      Body_Last  : Natural;
+      Order      : Byte_Order;
+      Code       : Unsigned_16;
+      Opt        : out Option_View;
+      Found      : out Boolean);
 
 end Pcapng_In_Ada.Options;

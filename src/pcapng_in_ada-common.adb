@@ -111,6 +111,18 @@ package body Pcapng_In_Ada.Common is
       Encode_U32_LE (Buf, Pos + 4, Hi);
    end Encode_U64_LE;
 
+   procedure Encode_U64_BE
+     (Buf : in out Byte_Buffer; Pos : Buffer_Index; Value : Unsigned_64)
+   is
+      Hi : constant Unsigned_32 :=
+        Unsigned_32 (Shift_Right (Value, 32) and 16#FFFF_FFFF#);
+      Lo : constant Unsigned_32 :=
+        Unsigned_32 (Value and 16#FFFF_FFFF#);
+   begin
+      Encode_U32_BE (Buf, Pos, Hi);
+      Encode_U32_BE (Buf, Pos + 4, Lo);
+   end Encode_U64_BE;
+
    function Swap_32 (Value : Unsigned_32) return Unsigned_32 is
       B0 : constant Unsigned_32 := Value and 16#FF#;
       B1 : constant Unsigned_32 :=

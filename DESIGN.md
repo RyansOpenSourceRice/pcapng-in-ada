@@ -26,9 +26,13 @@ within budget.
 
 ## Verification story
 
-Build (`alr build`) → unit drivers (`tests.gpr`) → examples (`examples.gpr`)
-→ `gnatprove --mode=silver --level=2`. Fuzz/corpus differential testing
-against Wireshark is roadmap (see ROADMAP.md).
+Build (`alr build`) → AUnit suite (`alr test`, 15 checks) → examples
+(`examples.gpr`) → `gnatprove --mode=silver` + `--mode=gold`
+`--level=2` (1088 checks, zero unproved). Fuzz smoke
+(`scripts/fuzz-smoke.sh` over `tests/corpus/`) and the Wireshark
+differential (`scripts/differential.sh`: dump==stream, capinfos/tshark
+oracle when installed) run in the `differential` CI job; AFL++ stays
+local-only (`fuzz/`).
 
 ## Scanner coverage (§9/§29 — documented skips)
 

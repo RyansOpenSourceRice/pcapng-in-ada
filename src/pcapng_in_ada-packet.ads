@@ -58,4 +58,17 @@ package Pcapng_In_Ada.Packet is
      (Shift_Left (Unsigned_64 (View.Ts_High), 32)
       or Unsigned_64 (View.Ts_Low));
 
+   EPB_Flags_Opt     : constant Unsigned_16 := 2;
+   EPB_Hash_Opt      : constant Unsigned_16 := 3;
+   EPB_Dropcount_Opt : constant Unsigned_16 := 4;
+
+   procedure Get_EPB_Option
+     (Buf   : Byte_Buffer;
+      View  : EPB_View;
+      Order : Byte_Order;
+      Code  : Unsigned_16;
+      First : out Natural;
+      Last  : out Natural;
+      Found : out Boolean);
+
 end Pcapng_In_Ada.Packet;

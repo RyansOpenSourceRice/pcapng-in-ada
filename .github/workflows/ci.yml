@@ -59,17 +59,17 @@ jobs:
       - name: Build library
         run: alr -n build
 
-      - name: Build and run tests
-        run: |
-          alr exec -- gprbuild -P tests/tests.gpr
-          ./bin/test_reader
-          ./bin/test_malformed
+      - name: AUnit suite (alr test)
+        run: alr test
 
       - name: Build examples
         run: alr exec -- gprbuild -P examples/examples.gpr
 
       - name: GNATprove Silver
         run: alr exec -- gnatprove -P pcapng_in_ada.gpr --mode=silver --level=2 --checks-as-errors=on
+
+      - name: GNATprove Gold (full crate, zero unproved checks)
+        run: alr exec -- gnatprove -P pcapng_in_ada.gpr --mode=gold --level=2 --checks-as-errors=on
 
       - name: Upload test binaries
         if: always()
@@ -78,3 +78,39 @@ jobs:
           name: test-binaries
           path: bin/
           if-no-files-found: ignore
+
+  differential:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Install Alire
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          curl -sL -o /tmp/alire.zip https://github.com/alire-project/alire/releases/download/v2.1.1/alr-2.1.1-bin-x86_64-linux.zip
+          rm -rf /tmp/alire-dist && mkdir -p /tmp/alire-dist
+          unzip -o -q /tmp/alire.zip -d /tmp/alire-dist
+          install -m 0755 /tmp/alire-dist/bin/alr "$HOME/.local/bin/alr"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/alr" --version
+
+      - name: Deploy toolchain and build library
+        #  The fuzz/differential scripts call bare gprbuild after
+        #  `alr printenv`; on a fresh runner the toolchain is not
+        #  deployed until the first alr build, so build once here.
+        run: alr -n build
+
+      - name: Try install tshark (oracle, best-effort)
+        continue-on-error: true
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          echo "wireshark-common wireshark-common/install-setuid boolean false" | sudo debconf-set-selections
+          sudo apt-get update -y
+          sudo apt-get install -y --no-install-recommends tshark
+
+      - name: Fuzz smoke + differential
+        run: |
+          sh scripts/fuzz-smoke.sh
+          sh scripts/differential.sh
