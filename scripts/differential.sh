@@ -53,13 +53,19 @@ for f in tests/corpus/*.pcapng; do
     else
       echo "FAIL $f tshark cannot read"; FAIL=1
     fi
-    BAD=$(tshark -r "$f" \
+    #  Best-effort oracle: a tshark query failure (old version, odd
+    #  build) must not fail the gate under set -e — self-consistency
+    #  above is the verdict, tshark is the bonus.
+    if BAD=$(tshark -r "$f" \
       -Y 'pcapng.block.lengths_dont_match or pcapng.invalid_option_length' \
-      -T fields -e frame.number 2>/dev/null)
-    if [ -z "$BAD" ]; then
-      echo "ok   $f no structural complaints"
+      -T fields -e frame.number 2>/dev/null); then
+      if [ -z "$BAD" ]; then
+        echo "ok   $f no structural complaints"
+      else
+        echo "FAIL $f tshark flags: $BAD"; FAIL=1
+      fi
     else
-      echo "FAIL $f tshark flags: $BAD"; FAIL=1
+      echo "(warn $f tshark filter query failed; skipping)"
     fi
   fi
 done
